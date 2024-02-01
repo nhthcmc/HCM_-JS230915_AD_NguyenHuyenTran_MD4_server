@@ -1,16 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-import answers from "./answer";
+import answers from "./answers";
 import categories from "./categories";
 import questions from "./questions";
 (async () => {
     try {
-        await prisma.answer.createMany({
-            data: [
-                ...answers
-            ]
-        })
         await prisma.category.createMany({
             data: [
                 ...categories
@@ -19,6 +14,11 @@ import questions from "./questions";
         await prisma.question.createMany({
             data: [
                 ...questions
+            ]
+        })
+        await prisma.answer.createMany({
+            data: [
+                ...answers
             ]
         })
     } catch (err) {

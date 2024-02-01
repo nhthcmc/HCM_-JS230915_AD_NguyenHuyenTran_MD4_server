@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { questionModel } from "../models/question.model";
 
 export const questionController = {
-    findAll: async (res: Response) => {
+    findAll: async (req: Request, res: Response) => {
         try {
             const { status, data } = await questionModel.findAll();
             if (status) {

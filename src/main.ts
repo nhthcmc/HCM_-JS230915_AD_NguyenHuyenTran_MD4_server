@@ -9,7 +9,7 @@ import bodyParser from 'body-parser';
 app.use(bodyParser.json())
 
 import Router from './routes'
-app.use(Router)
+app.use('/api', Router)
 
 app.listen(3000, () => {
     console.log(`Server is running on http://localhost:3000/api/v1`);

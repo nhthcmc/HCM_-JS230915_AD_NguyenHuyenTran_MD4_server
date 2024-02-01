@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { categoryModel } from "../models/category.model";
 
 export const categoryController = {
-    findAll: async (res: Response) => {
+    findAll: async (req: Request, res: Response) => {
         try {
             const { status, data } = await categoryModel.findAll();
             if (status) {
