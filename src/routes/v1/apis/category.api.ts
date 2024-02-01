@@ -4,6 +4,5 @@ import { categoryController } from '../../../controllers/category.controller';
 
 Router.get('/', categoryController.findAll)
 Router.post('/', categoryController.create)
-Router.put('/:id', categoryController.update)
-Router.delete('/:id', categoryController.delete)
+Router.get('/:id', categoryController.findById)
 export default Router

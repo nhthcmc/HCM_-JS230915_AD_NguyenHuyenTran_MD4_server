@@ -4,50 +4,76 @@ const prisma = new PrismaClient()
 
 export const categoryModel = {
     findAll: async () => {
-        let data = await prisma.category.findMany()
-        return {
-            status: true,
-            message: "All categories",
-            data
+        try {
+            let categories = await prisma.category.findMany()
+            return {
+                status: true,
+                message: "All categories",
+                data: categories
+            }
+        } catch (err) {
+            console.log('err', err)
+            return {
+                err,
+                status: false,
+                data: null
+            }
         }
     },
     create: async (data: Category) => {
-        let category = await prisma.category.create({
-            data: {
-                ...data
+        try {
+            let category = await prisma.category.create({
+                data: {
+                    ...data
+                },
+                include: {
+                    questions: {
+                        include: {
+                            answers: true
+                        }
+                    }
+                }
+            })
+            return {
+                status: true,
+                message: "Created",
+                data: category
             }
-        })
-        return {
-            status: true,
-            message: "Created",
-            data: category
+        } catch (err: any) {
+            console.log('err', err)
+            return {
+                err,
+                status: false,
+                data: null
+            }
         }
     },
-    update: async (id: number, category: Category) => {
-        let data = await prisma.category.update({
-            where: {
-                id
-            },
-            data: {
-                ...category,
+    findById: async (categoryId: number) => {
+        try {
+            let category = await prisma.category.findUnique({
+                where: {
+                    id: categoryId
+                },
+                include: {
+                    questions: {
+                        include: {
+                            answers: true
+                        }
+                    }
+                }
+            })
+            return {
+                data: category,
+                status: true,
+                err: null
             }
-        })
-        return {
-            status: true,
-            message: "Updated",
-            data
-        }
-    },
-    delete: async (id: number) => {
-        let data = await prisma.category.delete({
-            where: {
-                id
+        } catch (err) {
+            console.log('err', err)
+            return {
+                err,
+                status: false,
+                data: null
             }
-        })
-        return {
-            status: true,
-            message: "Deleted",
-            data
         }
     }
 }

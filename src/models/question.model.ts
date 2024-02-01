@@ -4,50 +4,119 @@ const prisma = new PrismaClient()
 
 export const questionModel = {
     findAll: async () => {
-        let data = await prisma.question.findMany()
-        return {
-            status: true,
-            message: "All questions",
-            data
+        try {
+            let questions = await prisma.question.findMany({
+                include: {
+                    answers: true
+                }
+            })
+            return {
+                status: true,
+                message: "All questions",
+                data: questions
+            }
+        } catch (err) {
+            console.log('err', err)
+            return {
+                err,
+                status: false,
+            }
         }
     },
+    findById: async (questionId: number) => {
+        try {
+            let question = await prisma.question.findUnique({
+                where: {
+                    id: questionId
+                },
+                include: {
+                    answers: true
+                }
+            })
+            return {
+                data: question,
+                status: true,
+            }
+        } catch (err) {
+            console.log('err', err)
+            return {
+                err,
+                status: false,
+                data: null
+            }
+        }
+    },
+    findByIdWithAnswer: async (questionId: number) => {
+        try {
+            let question = await prisma.question.findUnique({
+                where: {
+                    id: questionId
+                },
+                include: {
+                    answers: true
+                }
+            })
+            return {
+                data: question,
+                status: true
+            }
+        } catch (err) {
+            console.log('err', err)
+            return {
+                err,
+                status: false,
+                data: null
+            }
+        }
+    },
+
+
     create: async (data: Question) => {
-        let question = await prisma.question.create({
-            data: {
-                ...data
+        try {
+            let question = await prisma.question.create({
+                data: {
+                    ...data
+                },
+                include: {
+                    answers: true
+                }
+            })
+            return {
+                status: true,
+                message: "Created",
+                data: question
             }
-        })
-        return {
-            status: true,
-            message: "Created",
-            data: question
+        } catch (err: any) {
+            console.log('err', err)
+            return {
+                err,
+                status: false,
+                data: null
+            }
         }
     },
-    update: async (id: number, question: Question) => {
-        let data = await prisma.question.update({
-            where: {
-                id
-            },
-            data: {
-                ...question,
+    findWithCondition: async (categoryId: number, levelCondition: number, limit: number) => {
+        try {
+            let questions = await prisma.question.findMany({
+                where: {
+                    categoryId: categoryId,
+                    level: levelCondition
+                },
+                take: limit,
+                include: {
+                    answers: true
+                }
+            })
+            return {
+                data: questions,
+                status: true
             }
-        })
-        return {
-            status: true,
-            message: "Updated",
-            data
-        }
-    },
-    delete: async (id: number) => {
-        let data = await prisma.question.delete({
-            where: {
-                id
+        } catch (err) {
+            console.log('err', err)
+            return {
+                err,
+                status: false,
             }
-        })
-        return {
-            status: true,
-            message: "Deleted",
-            data
         }
     }
 }

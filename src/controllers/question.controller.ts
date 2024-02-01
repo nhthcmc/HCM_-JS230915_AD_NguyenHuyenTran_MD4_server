@@ -4,18 +4,17 @@ import { questionModel } from "../models/question.model";
 export const questionController = {
     findAll: async (res: Response) => {
         try {
-            const { status, message, data } = await questionModel.findAll();
+            const { status, data } = await questionModel.findAll();
             if (status) {
                 return res.status(200).json({
-                    message,
+                    message: "All questions",
                     data
                 });
-            } else {
-                throw {
-                    message: "error"
-                };
             }
-        } catch (err) {
+            throw {
+                message: "Error"
+            };
+        } catch (err: any) {
             console.log('err', err);
             return res.status(500).json({
                 message: (err as Error).message || "Internal Server Error",
@@ -25,60 +24,72 @@ export const questionController = {
     },
     create: async (req: Request, res: Response) => {
         try {
-            const { status, message, data } = await questionModel.create(req.body);
+            const { status, data } = await questionModel.create(req.body);
             if (status) {
                 return res.status(201).json({
-                    message,
+                    message: 'Created',
                     data
                 })
-            } else {
-                throw {
-                    message: "Error!"
-                }
             }
-        } catch (err) {
+            throw {
+                message: "Error"
+            }
+        } catch (err: any) {
             console.log('err', err);
             return res.status(500).json({
                 message: (err as Error).message || "Internal Server Error",
             })
         }
     },
-    update: async (req: Request, res: Response) => {
+    findById: async (req: Request, res: Response) => {
         try {
-            const questionId = parseInt(req.params.id)
-            const { status, message, data } = await questionModel.update(questionId, req.body);
+            const { data, status } = await questionModel.findById(Number(req.params.id))
             if (status) {
-                return res.status(200).json({
-                    message,
-                    data
+                return res.status(201).json({
+                    data,
+                    message: 'Found'
                 })
-            } else {
-                throw {
-                    message: "Question not found!"
-                }
             }
-        } catch (err) {
-            console.log('err', err);
+            throw {
+                message: "Error"
+            }
+        } catch (err: any) {
             return res.status(500).json({
                 message: (err as Error).message || "Internal Server Error",
             })
         }
     },
-    delete: async (req: Request, res: Response) => {
+    findByIdWithAnswer: async (req: Request, res: Response) => {
         try {
-            const questionId = parseInt(req.params.id)
-            const { status, message, data } = await questionModel.delete(questionId);
+            const { data, status } = await questionModel.findById(Number(req.params.id))
             if (status) {
-                return res.status(200).json({
-                    message,
-                    data
+                return res.status(201).json({
+                    data,
+                    message: "Found"
                 })
-            } else {
-                throw {
-                    message: "Question not found!"
-                }
             }
-        } catch (err) {
+            throw {
+                message: "Error"
+            }
+        } catch (err: any) {
+            return res.status(500).json({
+                message: (err as Error).message || "Internal Server Error",
+            })
+        }
+    },
+    findWithConditon: async (req: Request, res: Response) => {
+        try {
+            const { data, status } = await questionModel.findWithCondition(Number(req.query.category), Number(req.query.level), Number(req.query.limit))
+            if (status) {
+                return res.status(201).json({
+                    data,
+                    message: "Found"
+                })
+            }
+            throw {
+                message: "Error"
+            }
+        } catch (err: any) {
             return res.status(500).json({
                 message: (err as Error).message || "Internal Server Error",
             })
